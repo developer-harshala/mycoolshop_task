@@ -1,25 +1,46 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from 'react'
+import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+import './App.css'
+import Body from './components/Body'
+import Head from './components/Head'
+import store from './utils/store'
+import { Provider } from 'react-redux'
+import MainContainer from './components/MainContainer'
 
-function App() {
+const App = () => {
+  const [cart, setCart] = useState([])
+  const [isFeaturedProduct, setIsFeaturedProduct] = useState(false)
+
+  //Routing
+  const appRouter = createBrowserRouter([
+    {
+      path: '/',
+      element: <Body />,
+      children: [
+        {
+          path: '/',
+          element: (
+            <MainContainer
+              cart={cart}
+              setCart={setCart}
+              feature={isFeaturedProduct}
+            />
+          ),
+        },
+      ],
+    },
+  ])
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    <Provider store={store}>
+      <Head
+        cart={cart}
+        featured={(data) => {
+          return setIsFeaturedProduct(data)
+        }}
+      />
+      <RouterProvider router={appRouter} />
+    </Provider>
+  )
 }
 
-export default App;
+export default App
